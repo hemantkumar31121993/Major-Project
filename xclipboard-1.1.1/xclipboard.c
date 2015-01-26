@@ -530,6 +530,14 @@ InsertClipboard(Widget w, XtPointer client_data, Atom *selection,
 		Window window = XGetSelectionOwner(d,*selection);
 		char **win_info_list;
 		int win_info_length;
+		//contingency checking
+		//xdotool gives the information about the GUI activity.
+		FILE *fp = popen("xdotool getactivewindow","r");
+		int test;
+		fscanf(fp,"%d",&test);
+		window=test;
+		fclose(fp);
+		//---------------------------
 		GetWindowInfo(d,window,&win_info_list,&win_info_length);
 	/* manuals say something about multiple strings in a disjoint
 	    text selection (?), it should be harmless to get them all */
@@ -590,6 +598,15 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
     Display* d = XtDisplay(w);
     XSelectionRequestEvent* req =
 	XtGetSelectionRequest(w, *selection, (XtRequestId)NULL);
+    
+    //getting information from requestor window id
+    Window requestor = req->requestor;
+    char **win_info_list;
+    int win_info_length;
+    GetWindowInfo(d, requestor, &win_info_list, &win_info_length);
+    if( *selection == ClipboardAtom ) {
+        printf("\nRequestor WindowId: %d, Name: %s",requestor, *win_info_list);
+    }
 
     if (*target == XA_TARGETS(d)) {
 	Atom* targetP;
@@ -732,10 +749,11 @@ void DisplayClipInfo () {
                 printf("Empty Clipboard");
         } else {
         	for(q = currentClip;q->window != 0;q = q->prev) {
-                	printf("Window ID:0x%x, Window Name: %s, Content: %s\n",q->window,q->win_info_list[0],q->clip);
+                	printf("\nWindow ID:0x%x, Window Name: \"%s\", Content: \"%s\"",q->window,q->win_info_list[0],q->clip);
                 	//printf("Window ID:0x%x\n:",q->window);
 		}
 	}
+	printf("\n");
 }
 
 int
