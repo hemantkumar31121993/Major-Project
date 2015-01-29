@@ -605,7 +605,13 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
     int win_info_length;
     GetWindowInfo(d, requestor, &win_info_list, &win_info_length);
     if( *selection == ClipboardAtom ) {
-        printf("\nRequestor WindowId: %d, Name: %s",requestor, *win_info_list);
+	char *tar;
+	if(*target == XA_TARGETS(d)) {
+		tar = "XA_TARGETS";
+	} else {
+		tar = "XA_OTHERS";
+	}
+        printf("\nRequestor WindowId: %d, Target: %s, Name: %s",requestor, tar, *win_info_list);
     }
 
     if (*target == XA_TARGETS(d)) {
