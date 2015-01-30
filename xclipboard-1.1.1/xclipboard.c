@@ -71,6 +71,9 @@ typedef struct _Clip {
 	Window		window;
 	char 		**win_info_list;
 	int			win_info_length;
+	Window		supportWindow;
+	char*		supportWindowName;
+	
 } ClipRec, *ClipPtr;
 
 static Atom wm_delete_window;
@@ -601,17 +604,23 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
     
     //getting information from requestor window id
     Window requestor = req->requestor;
+	FILE * fp = popen("xdotool getactivewindow","r");
+	int test;
+    fscanf(fp,"%d",&test);
+    requestor=test;
+    fclose(fp);
+
     char **win_info_list;
     int win_info_length;
     GetWindowInfo(d, requestor, &win_info_list, &win_info_length);
     if( *selection == ClipboardAtom ) {
-	char *tar;
-	if(*target == XA_TARGETS(d)) {
-		tar = "XA_TARGETS";
-	} else {
-		tar = "XA_OTHERS";
-	}
-        printf("\nRequestor WindowId: %d, Target: %s, Name: %s",requestor, tar, *win_info_list);
+		char *tar;
+		if(*target == XA_TARGETS(d)) {
+			tar = "XA_TARGETS";
+		} else {
+			//tar = "XA_OTHERS";
+        	printf("\nRequestor WindowId: %d, Name: %s",requestor, *win_info_list);
+		}
     }
 
     if (*target == XA_TARGETS(d)) {
