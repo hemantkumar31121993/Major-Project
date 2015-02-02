@@ -63,24 +63,46 @@ in this Software without prior written authorization from The Open Group.
 
 #define INFINITY 10000000	/* pretty big, huh? */
 
+typedef struct _Requestor {
+	Window window;
+	char *name;
+	Window supportWindow;
+	char *supportWindowName;
+	struct _Requestor *next;
+} Requestor ,*RequestorPtr;
 typedef struct _Clip {
     struct _Clip    *next, *prev;
     char	    *clip;
     char	    *filename;
     int		    avail;
+
+	//Owner Information
 	Window		window;
 	char 		**win_info_list;
 	int			win_info_length;
 	Window		supportWindow;
 	char*		supportWindowName;
+
+	//Requestor Information
+	RequestorPtr requestors;
 	
 } ClipRec, *ClipPtr;
+
+void addRequestor(ClipPtr ptr, Window window, char * name, Window supportWindow, char * supportWindowName) {
+	RequestorPtr newRequestor = (RequestorPtr)malloc(sizeof(Requestor));
+	newRequestor->window = window;
+	newRequestor->name = name;
+	newRequestor->supportWindow = supportWindow;
+	newRequestor->supportWindowName = supportWindowName;
+	newRequestor->next = ptr->requestors;
+	ptr->requestors = newRequestor;
+}
 
 static Atom wm_delete_window;
 static Atom wm_protocols;
 
 static void EraseTextWidget ( void );
-static void NewCurrentClipContents ( char *data, int len,Window window,char **win_info_list,int win_info_length );
+static void NewCurrentClipContents ( char *data, int len, Window window, char **win_info_list, int win_info_length, Window supportWindow, char *supportWindowName);
 int GetWindowInfo(Display *d, Window window, char ***win_info_list_ptr, int *win_info_length_ptr);
 
 static String fallback_resources[] = {
@@ -137,7 +159,7 @@ RestoreClip(Widget w, ClipPtr clip)
 
 /*ARGSUSED*/
 static ClipPtr 
-NewClip(Widget w, ClipPtr old, Window window, char *clip,char** win_info_list, int win_info_lenght)
+NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, int win_info_lenght, Window supportWindow, char * supportWindowName)
 {
 //	printf("CLIP[%s]",clip);
     ClipPtr newClip;
@@ -156,6 +178,9 @@ NewClip(Widget w, ClipPtr old, Window window, char *clip,char** win_info_list, i
 	newClip->window = window;
 	newClip->win_info_list = win_info_list;
 	newClip->win_info_length = win_info_lenght;
+	newClip->supportWindow = supportWindow;
+	newClip->supportWindowName = supportWindowName;
+	newClip->requestors = NULL;
     if (old)
     {
 	newClip->next = old->next;
@@ -401,11 +426,11 @@ WMProtocols(Widget w, XEvent *ev, String *params, Cardinal *n)
 static void
 NewCurrentClip(Widget w, XEvent *ev, String *parms, Cardinal *np)
 {
-    NewCurrentClipContents ("", 0,-1,NULL,0);
+    NewCurrentClipContents ("", 0,-1,NULL,0,-1,NULL);
 }
 
 static void
-NewCurrentClipContents(char *data, int len, Window window, char **win_info_list, int win_info_length )
+NewCurrentClipContents(char *data, int len, Window window, char **win_info_list, int win_info_length, Window supportWindow, char * supportWindowName )
 {
 //	fprintf(stdout,"DATA[%s]",data);
     XawTextBlock textBlock;
@@ -417,7 +442,7 @@ NewCurrentClipContents(char *data, int len, Window window, char **win_info_list,
 	currentClip = currentClip->next;
     /* any trailing clips with no text get overwritten */
     if (strlen (currentClip->clip) != 0)
-	currentClip = NewClip (text, currentClip, window, data, win_info_list, win_info_length);
+	currentClip = NewClip (text, currentClip, data, window, win_info_list, win_info_length, supportWindow, supportWindowName);
     
     textBlock.ptr = data;
     textBlock.firstPos = 0;
@@ -513,7 +538,7 @@ InsertClipboard(Widget w, XtPointer client_data, Atom *selection,
 		Atom *type, XtPointer value, unsigned long *length, 
 		int *format)
 {
-    Display *d = XtDisplay(w);
+ 	Display *d = XtDisplay(w);
     Atom target = (Atom)client_data;
     Boolean convert_failed = (*type == XT_CONVERT_FAIL);
 
@@ -530,7 +555,10 @@ InsertClipboard(Widget w, XtPointer client_data, Atom *selection,
 	ret = XmbTextPropertyToTextList(d, &prop, &list, &count);
 	if (ret >= Success)
 	{
-		Window window = XGetSelectionOwner(d,*selection);
+		Window supportWindow = XGetSelectionOwner(d,*selection);
+		char **supportWindowName;
+		int supportWindowNameLenght;
+		Window window;
 		char **win_info_list;
 		int win_info_length;
 		//contingency checking
@@ -542,10 +570,11 @@ InsertClipboard(Widget w, XtPointer client_data, Atom *selection,
 		fclose(fp);
 		//---------------------------
 		GetWindowInfo(d,window,&win_info_list,&win_info_length);
+		GetWindowInfo(d, supportWindow, &supportWindowName, &supportWindowNameLenght);
 	/* manuals say something about multiple strings in a disjoint
 	    text selection (?), it should be harmless to get them all */
 	    for (i = 0; i < count; i++) {
-			NewCurrentClipContents(list[i], strlen(list[i]),window,win_info_list,win_info_length);
+			NewCurrentClipContents(list[i], strlen(list[i]),window,win_info_list,win_info_length, supportWindow, *supportWindowName);
 			//printf("\nWindow:0x%x, %s, Data: %s",window,win_info_list[0],list[i]);
 		}
 	    XFreeStringList(list);
@@ -603,13 +632,15 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
 	XtGetSelectionRequest(w, *selection, (XtRequestId)NULL);
     
     //getting information from requestor window id
-    Window requestor = req->requestor;
+    Window requestor_supportWindow = req->requestor, requestor;
+	char **supportWindowName;
+	int supportWindowNameLength;
+	GetWindowInfo(d, requestor_supportWindow, &supportWindowName, &supportWindowNameLength);
 	FILE * fp = popen("xdotool getactivewindow","r");
 	int test;
     fscanf(fp,"%d",&test);
     requestor=test;
     fclose(fp);
-
     char **win_info_list;
     int win_info_length;
     GetWindowInfo(d, requestor, &win_info_list, &win_info_length);
@@ -619,7 +650,8 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
 			tar = "XA_TARGETS";
 		} else {
 			//tar = "XA_OTHERS";
-        	printf("\nRequestor WindowId: %d, Name: %s",requestor, *win_info_list);
+        	//printf("\nRequestor WindowId: %d, Name: %s",requestor, *win_info_list);
+			addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName);
 		}
     }
 
@@ -760,13 +792,23 @@ static XtResource resources[] = {
 
 void DisplayClipInfo () {
 	ClipPtr q;
-        if(currentClip == NULL) {
-                printf("Empty Clipboard");
-        } else {
+    if(currentClip == NULL) {
+         printf("Empty Clipboard");
+    } else {
         	for(q = currentClip;q->window != 0;q = q->prev) {
-                	printf("\nWindow ID:0x%x, Window Name: \"%s\", Content: \"%s\"",q->window,q->win_info_list[0],q->clip);
+					printf("\n+++++++++++++");
+                	printf("\nWindow ID:0x%x, Window Name: %s",q->window,q->win_info_list[0]);
+					printf("\nSupport Window ID: 0x%x, Support Window Name: %s", q->supportWindow, q->supportWindowName);
+					printf("\nContent----------------------------------\n%s\n----------------------------------",q->clip);
                 	//printf("Window ID:0x%x\n:",q->window);
-		}
+					RequestorPtr r = q->requestors;
+					while(r != NULL) {
+						printf("\nRequestor Window ID: 0x%x, Requestor Name: %s", r->window, r->name);
+						printf("\nSupport Window ID: 0x%x, Support Window Name: %s\n", r->supportWindow, r->supportWindowName);
+						r = r->next;
+					}
+					printf("+++++++++++++\n");
+			}
 	}
 	printf("\n");
 }
@@ -814,7 +856,7 @@ main(int argc, char *argv[])
 
     text = XtCreateManagedWidget( "text", Text, parent, args, n);
     
-    currentClip = NewClip (text, (ClipPtr) 0,0,"Initial Clip",NULL,-1);
+    currentClip = NewClip (text, (ClipPtr) 0,"Initial Clip",0,NULL,-1,-1,NULL);
 
     set_button_state ();
 
