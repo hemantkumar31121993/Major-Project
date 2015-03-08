@@ -56,6 +56,7 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #include <stdlib.h>
+#include <time.h>
 
 #define Command commandWidgetClass
 #define Label	labelWidgetClass
@@ -68,6 +69,8 @@ typedef struct _Requestor {
 	char *name;
 	Window supportWindow;
 	char *supportWindowName;
+	char* target_string;
+	time_t timestamp;
 	struct _Requestor *next;
 } Requestor ,*RequestorPtr;
 typedef struct _Clip {
@@ -82,18 +85,20 @@ typedef struct _Clip {
 	int			win_info_length;
 	Window		supportWindow;
 	char*		supportWindowName;
-
+	time_t		timestamp;
 	//Requestor Information
 	RequestorPtr requestors;
 	
 } ClipRec, *ClipPtr;
 
-void addRequestor(ClipPtr ptr, Window window, char * name, Window supportWindow, char * supportWindowName) {
+void addRequestor(ClipPtr ptr, Window window, char * name, Window supportWindow, char * supportWindowName, char * target_string) {
 	RequestorPtr newRequestor = (RequestorPtr)malloc(sizeof(Requestor));
 	newRequestor->window = window;
 	newRequestor->name = name;
 	newRequestor->supportWindow = supportWindow;
 	newRequestor->supportWindowName = supportWindowName;
+	newRequestor->target_string = target_string;
+	newRequestor->timestamp = time(NULL);
 	newRequestor->next = ptr->requestors;
 	ptr->requestors = newRequestor;
 }
@@ -180,6 +185,7 @@ NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, 
 	newClip->win_info_length = win_info_lenght;
 	newClip->supportWindow = supportWindow;
 	newClip->supportWindowName = supportWindowName;
+	newClip->timestamp = time(NULL);
 	newClip->requestors = NULL;
     if (old)
     {
@@ -645,13 +651,23 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
     int win_info_length;
     GetWindowInfo(d, requestor, &win_info_list, &win_info_length);
     if( *selection == ClipboardAtom ) {
-		char *tar;
-		if(*target == XA_TARGETS(d)) {
-			tar = "XA_TARGETS";
-		} else {
-			//tar = "XA_OTHERS";
-        	//printf("\nRequestor WindowId: %d, Name: %s",requestor, *win_info_list);
-			addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName);
+		if(*target != XA_TARGETS(d)) {
+			char *target_string;
+			if ( *target == XA_LIST_LENGTH(d))
+				target_string="XA_LIST_LENGTH";
+			if ( *target == XA_LENGTH(d))
+				target_string="XA_LENGTH";
+			if ( *target == XA_CHARACTER_POSITION(d))
+				target_string="XA_CHARACTER_POSITION";
+			if ( *target == XA_STRING )
+				target_string="XA_STRING";
+			if ( *target == XA_TEXT(d))
+				target_string="XA_TEXT";
+			if ( *target == XA_UTF8_STRING(d))
+				target_string="XA_UTF8_STRING";
+			if ( *target == XA_COMPOUND_TEXT(d))
+				target_string="XA_COMPOUND_TEXT";
+			addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);
 		}
     }
 
@@ -803,7 +819,7 @@ void DisplayClipInfo () {
                 	//printf("Window ID:0x%x\n:",q->window);
 					RequestorPtr r = q->requestors;
 					while(r != NULL) {
-						printf("\nRequestor Window ID: 0x%x, Requestor Name: %s", r->window, r->name);
+						printf("\nRequestor Window ID: 0x%x, Requestor Name: %s, Target: %s", r->window, r->name, r->target_string);
 						printf("\nSupport Window ID: 0x%x, Support Window Name: %s\n", r->supportWindow, r->supportWindowName);
 						r = r->next;
 					}
