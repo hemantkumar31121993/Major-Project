@@ -65,14 +65,16 @@ in this Software without prior written authorization from The Open Group.
 #define INFINITY 10000000	/* pretty big, huh? */
 
 typedef struct _Requestor {
-	Window window;
-	char *name;
-	Window supportWindow;
-	char *supportWindowName;
-	char* target_string;
-	time_t timestamp;
+	Window 		window;
+	char 		*name;
+	Window 		supportWindow;
+	char 		*supportWindowName;
+	char* 		target_string;
+	time_t 		timestamp;
+
 	struct _Requestor *next;
 } Requestor ,*RequestorPtr;
+
 typedef struct _Clip {
     struct _Clip    *next, *prev;
     char	    *clip;
@@ -86,6 +88,7 @@ typedef struct _Clip {
 	Window		supportWindow;
 	char*		supportWindowName;
 	time_t		timestamp;
+
 	//Requestor Information
 	RequestorPtr requestors;
 	
@@ -166,17 +169,17 @@ RestoreClip(Widget w, ClipPtr clip)
 static ClipPtr 
 NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, int win_info_lenght, Window supportWindow, char * supportWindowName)
 {
-//	printf("CLIP[%s]",clip);
+
     ClipPtr newClip;
 
     newClip = (ClipPtr) malloc (sizeof (ClipRec));
     if (!newClip)
-	return newClip;
-    //newClip->clip = clip;
+		return newClip;
+
 	newClip->clip = (char *)malloc(sizeof(char) * (strlen(clip) + 1));
+	
 	strcpy(newClip->clip,clip);
-//	printf("NEWCLIP{%s}",newClip->clip);
-	 newClip->avail = 0;
+	newClip->avail = 0;
     newClip->prev = old;
     newClip->next = NULL;
     newClip->filename = NULL;
@@ -187,11 +190,13 @@ NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, 
 	newClip->supportWindowName = supportWindowName;
 	newClip->timestamp = time(NULL);
 	newClip->requestors = NULL;
+
     if (old)
     {
-	newClip->next = old->next;
-	old->next = newClip;
+		newClip->next = old->next;
+		old->next = newClip;
     }
+
     return newClip;
 }
 
@@ -221,7 +226,7 @@ IndexCurrentClip (void)
     ClipPtr clip;
 
     for (clip = currentClip; clip; clip = clip->prev)
-	i++;
+		i++;
     return i;
 }
 
@@ -249,10 +254,10 @@ NextCurrentClip(Widget w, XEvent *ev, String *parms, Cardinal *np)
 {
     if (currentClip->next)
     {
-	//SaveClip (text, currentClip);
-	currentClip = currentClip->next;
-	RestoreClip (text, currentClip);
-	set_button_state ();
+		//SaveClip (text, currentClip);
+		currentClip = currentClip->next;
+		RestoreClip (text, currentClip);
+		set_button_state ();
     }
 }
 
@@ -262,10 +267,10 @@ PrevCurrentClip(Widget w, XEvent *ev, String *parms, Cardinal *np)
 {
     if (currentClip->prev)
     {
-	//SaveClip (text, currentClip);
-	currentClip = currentClip->prev;
-	RestoreClip (text, currentClip);
-	set_button_state ();
+		//SaveClip (text, currentClip);
+		currentClip = currentClip->prev;
+		RestoreClip (text, currentClip);
+		set_button_state ();
     }
 }
 
@@ -276,17 +281,18 @@ DeleteCurrentClip(Widget w, XEvent *ev, String *parms, Cardinal *np)
     ClipPtr newCurrent;
 
     if (currentClip->prev)
-	newCurrent = currentClip->prev;
+		newCurrent = currentClip->prev;
     else
-	newCurrent = currentClip->next;
+		newCurrent = currentClip->next;
     if (newCurrent)
     {
-	DeleteClip (text, currentClip);
-	currentClip = newCurrent;
-	RestoreClip (text, currentClip);
+		DeleteClip (text, currentClip);
+		currentClip = newCurrent;
+		RestoreClip (text, currentClip);
     }
     else
-	EraseTextWidget ();
+		EraseTextWidget ();
+
     set_button_state ();
 }
 
@@ -311,19 +317,21 @@ CenterWidgetAtPoint(Widget w, int x, int y)
     x = x - (int) width / 2;
     y = y - (int) height / 2;
     if (x < 0)
-	x = 0;
+		x = 0;
     else {
-	int scr_width = WidthOfScreen (XtScreen(w));
-	if (x + (int)width > scr_width)
-	    x = scr_width - width;
+		int scr_width = WidthOfScreen (XtScreen(w));
+		if (x + (int)width > scr_width)
+		    x = scr_width - width;
     }
+
     if (y < 0)
-	y = 0;
+		y = 0;
     else {
-	int scr_height = HeightOfScreen (XtScreen(w));
-	if (y + (int)height > scr_height)
-	    y = scr_height - height;
+		int scr_height = HeightOfScreen (XtScreen(w));
+		if (y + (int)height > scr_height)
+		    y = scr_height - height;
     }
+
     XtSetArg(args[0], XtNx, x);
     XtSetArg(args[1], XtNy, y);
     XtSetValues (w, args, 2);
@@ -432,27 +440,36 @@ WMProtocols(Widget w, XEvent *ev, String *params, Cardinal *n)
 static void
 NewCurrentClip(Widget w, XEvent *ev, String *parms, Cardinal *np)
 {
-    NewCurrentClipContents ("", 0,-1,NULL,0,-1,NULL);
+    /*NewCurrentClipContents ("", 0,-1,NULL,0,-1,NULL);*/
 }
 
 static void
 NewCurrentClipContents(char *data, int len, Window window, char **win_info_list, int win_info_length, Window supportWindow, char * supportWindowName )
 {
-//	fprintf(stdout,"DATA[%s]",data);
     XawTextBlock textBlock;
 
     //SaveClip (text, currentClip);
 
     /* append new clips at the end */
     while (currentClip && currentClip->next)
-	currentClip = currentClip->next;
+		currentClip = currentClip->next;
+
+	ClipPtr temp;
+	temp = currentClip;
+	if(currentClip != NULL) {
+		if(currentClip->requestors == NULL) {
+			currentClip = currentClip->prev;
+			free(temp);
+		}
+	}
+	temp = NULL;
+
     /* any trailing clips with no text get overwritten */
-    if (strlen (currentClip->clip) != 0)
-	currentClip = NewClip (text, currentClip, data, window, win_info_list, win_info_length, supportWindow, supportWindowName);
-    
-    textBlock.ptr = data;
-    textBlock.firstPos = 0;
-    textBlock.length = len;
+    //if (strlen (currentClip->clip) != 0)
+		currentClip = NewClip (text, currentClip, data, window, win_info_list, win_info_length, supportWindow, supportWindowName);
+    	textBlock.ptr = data;
+    	textBlock.firstPos = 0;
+    	textBlock.length = len;
     textBlock.format = FMT8BIT;
     if (XawTextReplace(text, 0, TextLength (text), &textBlock)) {
 #ifdef XKB
@@ -525,9 +542,6 @@ int GetWindowInfo(Display *d, Window window, char ***win_info_list_ptr, int *win
 	XGetWMName(d,window,&win_info);
 	retval = XmbTextPropertyToTextList(d,&win_info,win_info_list_ptr,win_info_length_ptr);
 	int i;
-	/*for(i = 0;i<*win_info_length_ptr;i++) {
-		printf(" %s ",*win_info_list_ptr[i]);
-	}*/
 	if (retval == Success || retval > 0 && *win_info_list_ptr != NULL) {
 	
 	} else {
@@ -581,7 +595,6 @@ InsertClipboard(Widget w, XtPointer client_data, Atom *selection,
 	    text selection (?), it should be harmless to get them all */
 	    for (i = 0; i < count; i++) {
 			NewCurrentClipContents(list[i], strlen(list[i]),window,win_info_list,win_info_length, supportWindow, *supportWindowName);
-			//printf("\nWindow:0x%x, %s, Data: %s",window,win_info_list[0],list[i]);
 		}
 	    XFreeStringList(list);
 	} else
@@ -808,10 +821,12 @@ static XtResource resources[] = {
 
 void DisplayClipInfo () {
 	ClipPtr q;
-    if(currentClip == NULL) {
+    if((currentClip == NULL) || (currentClip->window == 0)) {
          printf("Empty Clipboard");
     } else {
-        	for(q = currentClip;q->window != 0;q = q->prev) {
+			printf("Have Clipboard");
+        	for(q = currentClip; q != NULL; q = q->prev) {
+					printf("\nstart\n");
 					printf("\n+++++++++++++");
                 	printf("\nWindow ID:0x%x, Window Name: %s",q->window,q->win_info_list[0]);
 					printf("\nSupport Window ID: 0x%x, Support Window Name: %s", q->supportWindow, q->supportWindowName);
@@ -820,13 +835,14 @@ void DisplayClipInfo () {
 					RequestorPtr r = q->requestors;
 					while(r != NULL) {
 						printf("\nRequestor Window ID: 0x%x, Requestor Name: %s, Target: %s", r->window, r->name, r->target_string);
-						printf("\nSupport Window ID: 0x%x, Support Window Name: %s\n", r->supportWindow, r->supportWindowName);
+						printf("\nSupport Window ID: 0x%x, Support Window Name: %s", r->supportWindow, r->supportWindowName);
 						r = r->next;
 					}
-					printf("+++++++++++++\n");
+					printf("\n+++++++++++++\n");
+					printf("\nend\n");
 			}
 	}
-	printf("\n");
+	printf("LOL\n");
 }
 
 int
@@ -861,7 +877,7 @@ main(int argc, char *argv[])
     nextButton = XtCreateManagedWidget("next", Command, parent, NULL, ZERO);
     prevButton = XtCreateManagedWidget("prev", Command, parent, NULL, ZERO);
     indexLabel = XtCreateManagedWidget("index", Label, parent, NULL, ZERO);
-
+	
     n=0;
     XtSetArg(args[n], XtNtype, XawAsciiString); n++;
     XtSetArg(args[n], XtNeditType, XawtextEdit); n++;
@@ -872,9 +888,9 @@ main(int argc, char *argv[])
 
     text = XtCreateManagedWidget( "text", Text, parent, args, n);
     
-    currentClip = NewClip (text, (ClipPtr) 0,"Initial Clip",0,NULL,-1,-1,NULL);
+    currentClip = NewClip (text, NULL,"Initial Clip",0,NULL,-1,0,NULL);
 
-    set_button_state ();
+    //set_button_state ();
 
     fileDialogShell = XtCreatePopupShell("fileDialogShell",
 					 transientShellWidgetClass,
@@ -911,17 +927,5 @@ main(int argc, char *argv[])
 			   &wm_delete_window,1);
     	//printf("This is an error");
 	XtAppMainLoop(xtcontext);
-
-	//Now traversing the clip list
-
-	/*ClipPtr q;
-	if(currentClip == NULL) {
-		printf("Empty Clipboard");
-	}
-	for(q = currentClip;q;q = q->prev) {
-		//printf("Window ID:0x%x, Window Name: %s, Content: %s\n",q->window,q->win_info_list[0],q->clip);
-		printf("Window ID:0x%x\n:",q->window);
-	}
-//	XtAppMainLoop(xtcontext); */
     exit(0);
 }
