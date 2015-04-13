@@ -88,7 +88,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(MYSQL_CFLAGS)
 AM_V_CC = $(am__v_CC_$(V))
 am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
 am__v_CC_0 = @echo "  CC    " $@;
@@ -181,7 +181,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = 
+LIBS = -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -ldl
 LIB_MAN_DIR = $(mandir)/man$(LIB_MAN_SUFFIX)
 LIB_MAN_SUFFIX = 3
 LTLIBOBJS = 
@@ -207,7 +207,9 @@ SHELL = /bin/bash
 STRIP = 
 VERSION = 1.1.1
 XCLIPBOARD_CFLAGS =  
-XCLIPBOARD_LIBS = -lXaw7 -lXmu -lXt -lX11  
+XCLIPBOARD_LIBS = -lXaw7 -lXmu -lXt -lX11 
+MYSQL_CFLAGS = -I/usr/include/mysql -DBIG_JOINS=1 -fno-strict-aliasing -g -DNDEBUG
+MYSQL_LIBS = -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -ldl 
 XORG_MAN_PAGE = X Version 11
 abs_builddir = /home/temp/hemant_bcs11/xclipboard-1.1.1
 abs_srcdir = /home/temp/hemant_bcs11/xclipboard-1.1.1

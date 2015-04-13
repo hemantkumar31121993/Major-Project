@@ -33,6 +33,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #include <stdio.h>
+#include <my_global.h>	
+#include <mysql.h>
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 #include <X11/Xatom.h>
@@ -848,6 +850,12 @@ void DisplayClipInfo () {
 int
 main(int argc, char *argv[])
 {
+	{
+		MYSQL *con = mysql_init(NULL);
+		mysql_real_connect(con, "localhost", "provenance", "provenance", "provenance", 0, NULL, 0);
+		mysql_query(con, "insert into window_info (window,window_title) values (10,'Google Chrome')");
+	}	
+
     Arg args[4];
     Cardinal n;
     XtAppContext xtcontext;
