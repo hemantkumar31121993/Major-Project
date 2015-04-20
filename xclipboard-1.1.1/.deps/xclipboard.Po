@@ -12,16 +12,19 @@ xclipboard.o: xclipboard.c /usr/include/stdc-predef.h config.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h \
- /usr/include/mysql/my_global.h /usr/include/mysql/my_config.h \
- /usr/include/pthread.h /usr/include/endian.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h /usr/include/string.h \
+ /usr/include/xlocale.h /usr/include/x86_64-linux-gnu/bits/string.h \
+ /usr/include/x86_64-linux-gnu/bits/string2.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
- /usr/include/x86_64-linux-gnu/bits/byteswap-16.h /usr/include/sched.h \
- /usr/include/time.h /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/time.h /usr/include/xlocale.h \
+ /usr/include/x86_64-linux-gnu/bits/byteswap-16.h /usr/include/stdlib.h \
+ /usr/include/x86_64-linux-gnu/bits/string3.h \
+ /usr/include/mysql/my_global.h /usr/include/mysql/my_config.h \
+ /usr/include/pthread.h /usr/include/sched.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp.h /usr/include/stdlib.h \
+ /usr/include/x86_64-linux-gnu/bits/setjmp.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/sys/types.h \
@@ -87,15 +90,12 @@ xclipboard.o: xclipboard.c /usr/include/stdc-predef.h config.h \
  /usr/include/x86_64-linux-gnu/bits/dlfcn.h /usr/include/mysql/mysql.h \
  /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_com.h \
  /usr/include/mysql/mysql_time.h /usr/include/mysql/my_list.h \
- /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h \
+ /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h provenance.h \
  /usr/include/X11/Intrinsic.h /usr/include/X11/Xlib.h \
  /usr/include/X11/X.h /usr/include/X11/Xfuncproto.h \
  /usr/include/X11/Xosdefs.h /usr/include/X11/Xutil.h \
  /usr/include/X11/keysym.h /usr/include/X11/keysymdef.h \
- /usr/include/X11/Xresource.h /usr/include/string.h \
- /usr/include/x86_64-linux-gnu/bits/string.h \
- /usr/include/x86_64-linux-gnu/bits/string2.h \
- /usr/include/x86_64-linux-gnu/bits/string3.h /usr/include/X11/Core.h \
+ /usr/include/X11/Xresource.h /usr/include/X11/Core.h \
  /usr/include/X11/Composite.h /usr/include/X11/Constraint.h \
  /usr/include/X11/Object.h /usr/include/X11/RectObj.h \
  /usr/include/X11/StringDefs.h /usr/include/X11/Xatom.h \
@@ -154,11 +154,13 @@ config.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
-/usr/include/mysql/my_global.h:
+/usr/include/string.h:
 
-/usr/include/mysql/my_config.h:
+/usr/include/xlocale.h:
 
-/usr/include/pthread.h:
+/usr/include/x86_64-linux-gnu/bits/string.h:
+
+/usr/include/x86_64-linux-gnu/bits/string2.h:
 
 /usr/include/endian.h:
 
@@ -168,6 +170,16 @@ config.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
 
+/usr/include/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/bits/string3.h:
+
+/usr/include/mysql/my_global.h:
+
+/usr/include/mysql/my_config.h:
+
+/usr/include/pthread.h:
+
 /usr/include/sched.h:
 
 /usr/include/time.h:
@@ -176,13 +188,9 @@ config.h:
 
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
-/usr/include/xlocale.h:
-
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
 /usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/stdlib.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
@@ -352,6 +360,8 @@ config.h:
 
 /usr/include/mysql/my_alloc.h:
 
+provenance.h:
+
 /usr/include/X11/Intrinsic.h:
 
 /usr/include/X11/Xlib.h:
@@ -369,14 +379,6 @@ config.h:
 /usr/include/X11/keysymdef.h:
 
 /usr/include/X11/Xresource.h:
-
-/usr/include/string.h:
-
-/usr/include/x86_64-linux-gnu/bits/string.h:
-
-/usr/include/x86_64-linux-gnu/bits/string2.h:
-
-/usr/include/x86_64-linux-gnu/bits/string3.h:
 
 /usr/include/X11/Core.h:
 

@@ -33,8 +33,13 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #include <stdio.h>
+#include <string.h>
+
 #include <my_global.h>	
 #include <mysql.h>
+
+#include <provenance.h>
+
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 #include <X11/Xatom.h>
@@ -73,6 +78,7 @@ typedef struct _Requestor {
 	char 		*supportWindowName;
 	char* 		target_string;
 	time_t 		timestamp;
+	int 		db_requestor_id;
 
 	struct _Requestor *next;
 } Requestor ,*RequestorPtr;
@@ -90,6 +96,8 @@ typedef struct _Clip {
 	Window		supportWindow;
 	char*		supportWindowName;
 	time_t		timestamp;
+	int			db_owner_id;
+	int			db_data_id;
 
 	//Requestor Information
 	RequestorPtr requestors;
