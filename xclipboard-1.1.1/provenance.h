@@ -39,7 +39,7 @@ int insertWindowInfo(int window, char * window_title, int is_to_insert) {
 	mysql_query(con, query);
 	MYSQL_RES *result = mysql_store_result(con);
 	MYSQL_ROW row = mysql_fetch_row(result);
-	
+	mysql_free_result(result);
 	if(row != NULL) {
 		// at this condition there MUST NOT be more than one row, if there are then we are in a great problem
 		return row[0];
@@ -66,6 +66,7 @@ int insertCopyInfo(int owner_id, char *data) {
 }
 
 int insertPasteInfo(int requestor_id, int data_id) {
+	printf("Entered the function");
 	char query[100];
 	sprintf(query, "INSERT INTO paste_info (requestor_id, data_id) VALUES ('%d', '%s');", requestor_id, data_id);
 	mysql_query(con, query);

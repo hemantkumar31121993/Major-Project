@@ -112,6 +112,11 @@ void addRequestor(ClipPtr ptr, Window window, char * name, Window supportWindow,
 	newRequestor->supportWindowName = supportWindowName;
 	newRequestor->target_string = target_string;
 	newRequestor->timestamp = time(NULL);
+
+	//inserting requestor's information
+	newRequestor->db_requestor_id = insertWindowInfo(window, name, 1);
+	//insertPasteInfo(newRequestor->db_requestor_id, ptr->db_data_id);
+	//insertPasteInfo(10, 12);
 	newRequestor->next = ptr->requestors;
 	ptr->requestors = newRequestor;
 }
@@ -177,7 +182,7 @@ RestoreClip(Widget w, ClipPtr clip)
 
 /*ARGSUSED*/
 static ClipPtr 
-NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, int win_info_lenght, Window supportWindow, char * supportWindowName)
+NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, int win_info_length, Window supportWindow, char * supportWindowName)
 {
 
     ClipPtr newClip;
@@ -195,11 +200,17 @@ NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, 
     newClip->filename = NULL;
 	newClip->window = window;
 	newClip->win_info_list = win_info_list;
-	newClip->win_info_length = win_info_lenght;
+	newClip->win_info_length = win_info_length;
 	newClip->supportWindow = supportWindow;
 	newClip->supportWindowName = supportWindowName;
 	newClip->timestamp = time(NULL);
 	newClip->requestors = NULL;
+	
+	//insertion of info in copy_info
+	if(window != 0 && **win_info_list != NULL && win_info_length != -1) {
+		newClip->db_owner_id = insertWindowInfo((int)window, *win_info_list,1);
+		newClip->db_data_id = insertCopyInfo(newClip->db_owner_id, clip);
+	}	
 
     if (old)
     {
@@ -312,6 +323,7 @@ Quit(Widget w, XEvent *ev, String *parms, Cardinal *np)
 {
     XtCloseDisplay  (XtDisplay (text));
     DisplayClipInfo();
+	destroyDBConnection();
     exit (0);
 }
 
@@ -858,12 +870,8 @@ void DisplayClipInfo () {
 int
 main(int argc, char *argv[])
 {
-	{
-		MYSQL *con = mysql_init(NULL);
-		mysql_real_connect(con, "localhost", "provenance", "provenance", "provenance", 0, NULL, 0);
-		mysql_query(con, "insert into window_info (window,window_title) values (10,'Google Chrome')");
-	}	
 
+	createDBConnection();
     Arg args[4];
     Cardinal n;
     XtAppContext xtcontext;
