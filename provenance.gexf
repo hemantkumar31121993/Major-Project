@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2">
+<graph mode="static" defaultedgetype="directed">
+<nodes>
+<node id="17" label="Firewall Authentication Keepalive Window - Google " />
+<node id="15" label="IBM's Watson cognitive computer has whipped up a c" />
+<node id="16" label="*Untitled Document 1 - gedit" />
+<node id="18" label="Document1 - Writer" />
+</nodes>
+<edges>
+<edge id="0" source="15" target="16" weight="3" />
+<edge id="1" source="17" target="18" weight="1" />
+</edges>
+</graph>
+</gexf>
