@@ -68,7 +68,7 @@ int insertCopyInfo(int owner_id, char *data) {
 int insertPasteInfo(int requestor_id, int data_id) {
 	printf("Entered the function");
 	char query[100];
-	sprintf(query, "INSERT INTO paste_info (requestor_id, data_id) VALUES ('%d', '%s');", requestor_id, data_id);
+	sprintf(query, "INSERT INTO paste_info (requestor_id, data_id) VALUES ('%d', '%d');", requestor_id, data_id);
 	mysql_query(con, query);
 	return mysql_insert_id(con);
 }

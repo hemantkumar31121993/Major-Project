@@ -115,7 +115,7 @@ void addRequestor(ClipPtr ptr, Window window, char * name, Window supportWindow,
 
 	//inserting requestor's information
 	newRequestor->db_requestor_id = insertWindowInfo(window, name, 1);
-	//insertPasteInfo(newRequestor->db_requestor_id, ptr->db_data_id);
+	insertPasteInfo(newRequestor->db_requestor_id, ptr->db_data_id);
 	//insertPasteInfo(10, 12);
 	newRequestor->next = ptr->requestors;
 	ptr->requestors = newRequestor;
