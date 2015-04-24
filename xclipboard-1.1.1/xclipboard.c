@@ -34,6 +34,7 @@ in this Software without prior written authorization from The Open Group.
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <my_global.h>	
 #include <mysql.h>
@@ -115,6 +116,7 @@ void addRequestor(ClipPtr ptr, Window window, char * name, Window supportWindow,
 
 	//inserting requestor's information
 	newRequestor->db_requestor_id = insertWindowInfo(window, name, 1);
+	//printf("\nRequestor Data ID:%d\n", newRequestor->db_requestor_id, ptr->db_data_id);
 	insertPasteInfo(newRequestor->db_requestor_id, ptr->db_data_id);
 	//insertPasteInfo(10, 12);
 	newRequestor->next = ptr->requestors;
@@ -180,6 +182,21 @@ RestoreClip(Widget w, ClipPtr clip)
     XtSetValues (source, args, 1);
 }
 
+void freeNodes(ClipPtr ptr) {
+	if(ptr) {
+		if(ptr->requestors) {
+			RequestorPtr rptr = ptr->requestors;
+			while(rptr) {
+				RequestorPtr temp = rptr;
+				rptr = rptr->next;
+				free(temp);
+			}
+		}
+		free(ptr);
+	}
+}
+
+
 /*ARGSUSED*/
 static ClipPtr 
 NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, int win_info_length, Window supportWindow, char * supportWindowName)
@@ -195,7 +212,7 @@ NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, 
 	
 	strcpy(newClip->clip,clip);
 	newClip->avail = 0;
-    newClip->prev = old;
+    newClip->prev = NULL;
     newClip->next = NULL;
     newClip->filename = NULL;
 	newClip->window = window;
@@ -207,15 +224,22 @@ NewClip(Widget w, ClipPtr old, char *clip, Window window, char** win_info_list, 
 	newClip->requestors = NULL;
 	
 	//insertion of info in copy_info
-	if(window != 0 && **win_info_list != NULL && win_info_length != -1) {
+	if(window != 0 && **win_info_list != NULL && win_info_length != -1 && *clip !='\0') {
 		newClip->db_owner_id = insertWindowInfo((int)window, *win_info_list,1);
+		//printf("\nNewClip.db_owner_id:%d:", newClip->db_owner_id);
 		newClip->db_data_id = insertCopyInfo(newClip->db_owner_id, clip);
+		printf("\nNewClip.db_data_id:%d", newClip->db_data_id);
 	}	
 
     if (old)
     {
-		newClip->next = old->next;
+		/*newClip->next = old->next;
 		old->next = newClip;
+		freeNodes(old->prev);*/
+		ClipPtr temp;
+		temp = old;
+		old = newClip;
+		freeNodes(old);
     }
 
     return newClip;
@@ -322,7 +346,7 @@ static void
 Quit(Widget w, XEvent *ev, String *parms, Cardinal *np)
 {
     XtCloseDisplay  (XtDisplay (text));
-    DisplayClipInfo();
+    //DisplayClipInfo();
 	destroyDBConnection();
     exit (0);
 }
@@ -688,7 +712,7 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
     if( *selection == ClipboardAtom ) {
 		if(*target != XA_TARGETS(d)) {
 			char *target_string;
-			if ( *target == XA_LIST_LENGTH(d))
+			/*if ( *target == XA_LIST_LENGTH(d))
 				target_string="XA_LIST_LENGTH";
 			if ( *target == XA_LENGTH(d))
 				target_string="XA_LENGTH";
@@ -702,7 +726,32 @@ ConvertSelection(Widget w, Atom *selection, Atom *target,
 				target_string="XA_UTF8_STRING";
 			if ( *target == XA_COMPOUND_TEXT(d))
 				target_string="XA_COMPOUND_TEXT";
-			addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);
+			addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);*/
+			if ( *target == XA_LIST_LENGTH(d)) {
+			    target_string="XA_LIST_LENGTH";
+			}
+			if ( *target == XA_LENGTH(d)) {
+			    target_string="XA_LENGTH";
+			}
+			if ( *target == XA_CHARACTER_POSITION(d)) {
+			    target_string="XA_CHARACTER_POSITION";
+			}
+			if ( *target == XA_STRING ){
+			    target_string="XA_STRING";
+			    addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);
+			}
+			if ( *target == XA_TEXT(d)) {
+			    target_string="XA_TEXT";
+			    addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);
+			}
+			if ( *target == XA_UTF8_STRING(d)) {
+			    target_string="XA_UTF8_STRING";
+			    addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);
+			}
+			if ( *target == XA_COMPOUND_TEXT(d)) {
+			    target_string="XA_COMPOUND_TEXT";
+			    addRequestor(currentClip, requestor, *win_info_list, requestor_supportWindow, *supportWindowName, target_string);
+			}
 		}
     }
 

@@ -19,23 +19,23 @@ xclipboard.o: xclipboard.c /usr/include/stdc-predef.h config.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap-16.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/string3.h \
- /usr/include/mysql/my_global.h /usr/include/mysql/my_config.h \
- /usr/include/pthread.h /usr/include/sched.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
- /usr/include/x86_64-linux-gnu/sys/types.h \
+ /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/time.h \
  /usr/include/x86_64-linux-gnu/sys/select.h \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/sigset.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/select2.h \
- /usr/include/x86_64-linux-gnu/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+ /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/math.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+ /usr/include/mysql/my_global.h /usr/include/mysql/my_config.h \
+ /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/setjmp.h /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/huge_val.h \
  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
  /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
@@ -174,29 +174,13 @@ config.h:
 
 /usr/include/x86_64-linux-gnu/bits/string3.h:
 
-/usr/include/mysql/my_global.h:
-
-/usr/include/mysql/my_config.h:
-
-/usr/include/pthread.h:
-
-/usr/include/sched.h:
-
-/usr/include/time.h:
-
-/usr/include/x86_64-linux-gnu/bits/sched.h:
-
-/usr/include/x86_64-linux-gnu/bits/time.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
-
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
+
+/usr/include/time.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
@@ -204,9 +188,13 @@ config.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigset.h:
 
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
 /usr/include/x86_64-linux-gnu/bits/select2.h:
 
 /usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
 /usr/include/alloca.h:
 
@@ -215,6 +203,18 @@ config.h:
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
+
+/usr/include/mysql/my_global.h:
+
+/usr/include/mysql/my_config.h:
+
+/usr/include/pthread.h:
+
+/usr/include/sched.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
 
 /usr/include/math.h:
 
