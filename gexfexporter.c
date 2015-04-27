@@ -37,11 +37,11 @@ int main() {
 
 	//print edge information
 	fprintf(fp, "<edges>\n");
-    mysql_query(con, "select *,COUNT(*) from just_flow group by blueprint;");
+    mysql_query(con, "select * from flowmap");
     result = mysql_store_result(con);
 	int i=0;
 	while((row = mysql_fetch_row(result))) {
-        fprintf(fp, "<edge id=\"%d\" source=\"%s\" target=\"%s\" weight=\"%s\" />\n", i, row[0], row[1], row[3]);
+        fprintf(fp, "<edge id=\"%d\" source=\"%s\" target=\"%s\" weight=\"%s\" label=\"%s\" />\n", i, row[0], row[1], row[2], row[4]);
 		i++;
     }
 
